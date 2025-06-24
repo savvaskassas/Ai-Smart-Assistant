@@ -1,7 +1,7 @@
 from transformers import pipeline
 
 # Initialize the NLP pipeline (e.g., conversational model)
-nlp = pipeline("conversational", model="facebook/blenderbot-400M-distill")
+nlp = pipeline("text-generation", model="facebook/blenderbot-400M-distill")
 
 def get_chat_response(user_message: str) -> str:
     if not user_message:

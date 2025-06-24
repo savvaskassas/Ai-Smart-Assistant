@@ -10,6 +10,7 @@ ner_pipeline = pipeline(
 def extract_entities(text: str):
     """
     Extract named entities from a given text.
+    Returns a list of detected entities.
     """
     if not text or not text.strip():
         return []
