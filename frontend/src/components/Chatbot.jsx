@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Paper, Typography } from '@mui/material';
+import Calendar from './Calendar';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [calendarEvents, setCalendarEvents] = useState([]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -25,6 +27,22 @@ const Chatbot = () => {
     setLoading(false);
   };
 
+  const fetchCalendarEvents = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://127.0.0.1:8080/calendar/events');
+      const data = await response.json();
+      setCalendarEvents(data.events || []);
+      setMessages(msgs => [
+        ...msgs,
+        { sender: 'assistant', text: 'Calendar events loaded!' }
+      ]);
+    } catch (e) {
+      setMessages(msgs => [...msgs, { sender: 'assistant', text: 'Error fetching calendar events.' }]);
+    }
+    setLoading(false);
+  };
+
   return (
     <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
       <Paper sx={{ p: 2, minHeight: 300 }}>
@@ -38,16 +56,19 @@ const Chatbot = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Type your message..."
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
           disabled={loading}
         />
-        <Button onClick={sendMessage} variant="contained" sx={{ ml: 1 }} disabled={loading}>
+        <Button onClick={sendMessage} disabled={loading} sx={{ ml: 1 }} variant="contained">
           Send
         </Button>
+        <Button onClick={fetchCalendarEvents} disabled={loading} sx={{ ml: 1 }} variant="outlined">
+          Calendar Events
+        </Button>
       </Box>
+      {calendarEvents.length > 0 && <Calendar events={calendarEvents} />}
     </Box>
   );
 };
