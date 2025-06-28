@@ -43,6 +43,21 @@ const Chatbot = () => {
     setLoading(false);
   };
 
+  const fetchDayPlan = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://127.0.0.1:8080/day-plan');
+      const data = await response.json();
+      setMessages(msgs => [
+        ...msgs,
+        { sender: 'assistant', text: 'Day plan:\n' + data.day_plan.join('\n') }
+      ]);
+    } catch (e) {
+      setMessages(msgs => [...msgs, { sender: 'assistant', text: 'Error fetching day plan.' }]);
+    }
+    setLoading(false);
+  };
+
   return (
     <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
       <Paper sx={{ p: 2, minHeight: 300 }}>
@@ -66,6 +81,9 @@ const Chatbot = () => {
         </Button>
         <Button onClick={fetchCalendarEvents} disabled={loading} sx={{ ml: 1 }} variant="outlined">
           Calendar Events
+        </Button>
+        <Button onClick={fetchDayPlan} disabled={loading} sx={{ ml: 1 }} variant="outlined">
+          Day Plan
         </Button>
       </Box>
       {calendarEvents.length > 0 && <Calendar events={calendarEvents} />}

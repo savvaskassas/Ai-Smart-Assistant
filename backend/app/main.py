@@ -205,3 +205,32 @@ def get_important_emails_and_add_events():
             created_event = calendar_service.events().insert(calendarId='primary', body=event).execute()
             added_events.append({'email_subject': subject, 'event_id': created_event['id'], 'date': date_str})
     return {'added_events': added_events, 'debug_info': debug_info}
+
+@app.get("/day-plan")
+def get_day_plan():
+    creds = None
+    if os.path.exists(TOKEN_FILE):
+        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(GoogleRequest())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open(TOKEN_FILE, 'w') as token:
+            token.write(creds.to_json())
+    service = build('calendar', 'v3', credentials=creds)
+    now = datetime.utcnow().isoformat() + 'Z'
+    end_of_day = (datetime.utcnow().replace(hour=23, minute=59, second=59)).isoformat() + 'Z'
+    events_result = service.events().list(
+        calendarId='primary', timeMin=now, timeMax=end_of_day, singleEvents=True,
+        orderBy='startTime').execute()
+    events = events_result.get('items', [])
+    plan = []
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        summary = event.get('summary', 'No Title')
+        plan.append(f"{start}: {summary}")
+    if not plan:
+        plan.append("No scheduled events for today. You may want to focus on personal tasks or take a break.")
+    return {"day_plan": plan}
