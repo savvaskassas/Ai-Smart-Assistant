@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@mui/icons-material": "^7.1.2",
     "@mui/x-date-pickers": "^8.6.0",
     "date-fns": "^4.1.0"
   }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Paper, Typography } from '@mui/material';
+import { Box, TextField, Button, Paper, Typography, Stack, Avatar } from '@mui/material';
 import Calendar from './Calendar';
 
 const Chatbot = () => {
@@ -32,6 +32,7 @@ const Chatbot = () => {
     try {
       const response = await fetch('http://127.0.0.1:8080/calendar/events');
       const data = await response.json();
+      console.log('Calendar events response:', data);
       setCalendarEvents(data.events || []);
       setMessages(msgs => [
         ...msgs,
@@ -75,15 +76,33 @@ const Chatbot = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
-      <Paper sx={{ p: 2, minHeight: 300 }}>
-        {messages.map((msg, i) => (
-          <Typography key={i} sx={{ color: msg.sender === 'user' ? 'blue' : 'green' }}>
-            <b>{msg.sender === 'user' ? 'You' : 'Assistant'}:</b> {msg.text}
-          </Typography>
-        ))}
+    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 6, p: 2 }}>
+      <Typography variant="h4" align="center" fontWeight={700} mb={2} color="primary">
+        AI Smart Assistant
+      </Typography>
+      <Paper elevation={3} sx={{ p: 3, minHeight: 350, background: '#f9f9f9', borderRadius: 3 }}>
+        <Stack spacing={2}>
+          {messages.map((msg, i) => (
+            <Box key={i} sx={{ display: 'flex', flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row', alignItems: 'flex-end' }}>
+              <Avatar sx={{ bgcolor: msg.sender === 'user' ? 'primary.main' : 'secondary.main', ml: msg.sender === 'user' ? 2 : 0, mr: msg.sender === 'assistant' ? 2 : 0 }}>
+                {msg.sender === 'user' ? 'U' : 'A'}
+              </Avatar>
+              <Box sx={{
+                bgcolor: msg.sender === 'user' ? 'primary.light' : 'secondary.light',
+                color: '#222',
+                px: 2, py: 1, borderRadius: 2, maxWidth: '70%',
+                boxShadow: 1,
+                whiteSpace: 'pre-line',
+              }}>
+                <Typography variant="body1" fontWeight={msg.sender === 'user' ? 600 : 500}>
+                  {msg.text}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+        </Stack>
       </Paper>
-      <Box sx={{ display: 'flex', mt: 2 }}>
+      <Stack direction="row" spacing={2} mt={2}>
         <TextField
           fullWidth
           variant="outlined"
@@ -91,20 +110,24 @@ const Chatbot = () => {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
           disabled={loading}
+          placeholder="Type your message..."
+          sx={{ bgcolor: 'white', borderRadius: 2 }}
         />
-        <Button onClick={sendMessage} disabled={loading} sx={{ ml: 1 }} variant="contained">
+        <Button onClick={sendMessage} disabled={loading} variant="contained" size="large">
           Send
         </Button>
-        <Button onClick={fetchCalendarEvents} disabled={loading} sx={{ ml: 1 }} variant="outlined">
+      </Stack>
+      <Stack direction="row" spacing={2} mt={2} justifyContent="center">
+        <Button onClick={fetchCalendarEvents} disabled={loading} variant="outlined">
           Calendar Events
         </Button>
-        <Button onClick={fetchDayPlan} disabled={loading} sx={{ ml: 1 }} variant="outlined">
+        <Button onClick={fetchDayPlan} disabled={loading} variant="outlined">
           Day Plan
         </Button>
-        <Button onClick={fetchProductivityInsights} disabled={loading} sx={{ ml: 1 }} variant="outlined">
+        <Button onClick={fetchProductivityInsights} disabled={loading} variant="outlined">
           Productivity Insights
         </Button>
-      </Box>
+      </Stack>
       {calendarEvents.length > 0 && <Calendar events={calendarEvents} />}
     </Box>
   );
