@@ -70,9 +70,12 @@ def get_calendar_events():
         with open(TOKEN_FILE, 'w') as token:
             token.write(creds.to_json())
     service = build('calendar', 'v3', credentials=creds)
+    from datetime import datetime, timedelta
+    now = datetime.utcnow().isoformat() + 'Z'
+    future = (datetime.utcnow() + timedelta(days=30)).isoformat() + 'Z'
     events_result = service.events().list(
-        calendarId='primary', maxResults=10, singleEvents=True,
-        orderBy='startTime', timeMin=None).execute()
+        calendarId='primary', timeMin=now, timeMax=future, singleEvents=True,
+        orderBy='startTime', maxResults=100).execute()
     events = events_result.get('items', [])
     return {"events": events}
 
@@ -234,3 +237,49 @@ def get_day_plan():
     if not plan:
         plan.append("No scheduled events for today. You may want to focus on personal tasks or take a break.")
     return {"day_plan": plan}
+
+@app.get("/productivity-insights")
+def get_productivity_insights():
+    creds = None
+    if os.path.exists(TOKEN_FILE):
+        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(GoogleRequest())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open(TOKEN_FILE, 'w') as token:
+            token.write(creds.to_json())
+    service = build('calendar', 'v3', credentials=creds)
+    now = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = now.replace(hour=23, minute=59, second=59)
+    now_iso = now.isoformat() + 'Z'
+    end_of_day_iso = end_of_day.isoformat() + 'Z'
+    events_result = service.events().list(
+        calendarId='primary', timeMin=now_iso, timeMax=end_of_day_iso, singleEvents=True,
+        orderBy='startTime').execute()
+    events = events_result.get('items', [])
+    # Calculate time spent per event and per hour
+    hour_buckets = {str(h).zfill(2)+":00": 0 for h in range(24)}
+    total_minutes = 0
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        end = event['end'].get('dateTime', event['end'].get('date'))
+        try:
+            start_dt = datetime.fromisoformat(start.replace('Z', '+00:00'))
+            end_dt = datetime.fromisoformat(end.replace('Z', '+00:00'))
+            duration = (end_dt - start_dt).total_seconds() / 60
+            total_minutes += duration
+            hour_label = start_dt.strftime('%H:00')
+            hour_buckets[hour_label] += duration
+        except Exception:
+            continue
+    most_productive_hour = max(hour_buckets, key=hour_buckets.get)
+    insights = {
+        "total_events": len(events),
+        "total_minutes": total_minutes,
+        "most_productive_hour": most_productive_hour,
+        "minutes_per_hour": hour_buckets
+    }
+    return {"insights": insights}

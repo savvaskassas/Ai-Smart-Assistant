@@ -58,6 +58,22 @@ const Chatbot = () => {
     setLoading(false);
   };
 
+  const fetchProductivityInsights = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://127.0.0.1:8080/productivity-insights');
+      const data = await response.json();
+      const insights = data.insights;
+      setMessages(msgs => [
+        ...msgs,
+        { sender: 'assistant', text: `Productivity Insights:\nTotal events: ${insights.total_events}\nTotal minutes: ${insights.total_minutes}\nMost productive hour: ${insights.most_productive_hour}\nMinutes per hour: ${JSON.stringify(insights.minutes_per_hour, null, 2)}` }
+      ]);
+    } catch (e) {
+      setMessages(msgs => [...msgs, { sender: 'assistant', text: 'Error fetching productivity insights.' }]);
+    }
+    setLoading(false);
+  };
+
   return (
     <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
       <Paper sx={{ p: 2, minHeight: 300 }}>
@@ -84,6 +100,9 @@ const Chatbot = () => {
         </Button>
         <Button onClick={fetchDayPlan} disabled={loading} sx={{ ml: 1 }} variant="outlined">
           Day Plan
+        </Button>
+        <Button onClick={fetchProductivityInsights} disabled={loading} sx={{ ml: 1 }} variant="outlined">
+          Productivity Insights
         </Button>
       </Box>
       {calendarEvents.length > 0 && <Calendar events={calendarEvents} />}
