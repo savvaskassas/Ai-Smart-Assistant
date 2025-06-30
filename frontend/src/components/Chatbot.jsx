@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button, Paper, Typography, Stack, Avatar, CircularProgress } from '@mui/material';
+import React, { useState, useRef, useEffect } from 'react';
+import { Box, TextField, Button, Paper, Typography, Stack, Avatar, CircularProgress, Tooltip } from '@mui/material';
 import Calendar from './Calendar';
 import PersonIcon from '@mui/icons-material/Person';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
@@ -9,6 +9,13 @@ const Chatbot = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState([]);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -103,6 +110,7 @@ const Chatbot = () => {
               </Box>
             </Box>
           ))}
+          <div ref={messagesEndRef} />
         </Stack>
       </Paper>
       {loading && (
@@ -121,20 +129,36 @@ const Chatbot = () => {
           placeholder="Type your message..."
           sx={{ bgcolor: 'white', borderRadius: 2 }}
         />
-        <Button onClick={sendMessage} disabled={loading} variant="contained" size="large" sx={{ minWidth: { xs: '100%', sm: 100 } }}>
-          Send
-        </Button>
+        <Tooltip title="Send your message">
+          <span>
+            <Button onClick={sendMessage} disabled={loading} variant="contained" size="large" sx={{ minWidth: { xs: '100%', sm: 100 } }}>
+              Send
+            </Button>
+          </span>
+        </Tooltip>
       </Stack>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2} justifyContent="center">
-        <Button onClick={fetchCalendarEvents} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
-          Calendar Events
-        </Button>
-        <Button onClick={fetchDayPlan} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
-          Day Plan
-        </Button>
-        <Button onClick={fetchProductivityInsights} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 180 } }}>
-          Productivity Insights
-        </Button>
+        <Tooltip title="Load your Google Calendar events">
+          <span>
+            <Button onClick={fetchCalendarEvents} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
+              Calendar Events
+            </Button>
+          </span>
+        </Tooltip>
+        <Tooltip title="Get your personalized day plan">
+          <span>
+            <Button onClick={fetchDayPlan} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
+              Day Plan
+            </Button>
+          </span>
+        </Tooltip>
+        <Tooltip title="See productivity analytics">
+          <span>
+            <Button onClick={fetchProductivityInsights} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 180 } }}>
+              Productivity Insights
+            </Button>
+          </span>
+        </Tooltip>
       </Stack>
       {calendarEvents.length > 0 && <Calendar events={calendarEvents} />}
     </Box>
