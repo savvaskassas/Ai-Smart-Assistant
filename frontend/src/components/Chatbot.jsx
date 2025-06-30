@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Paper, Typography, Stack, Avatar } from '@mui/material';
+import { Box, TextField, Button, Paper, Typography, Stack, Avatar, CircularProgress } from '@mui/material';
 import Calendar from './Calendar';
+import PersonIcon from '@mui/icons-material/Person';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
@@ -76,23 +78,24 @@ const Chatbot = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 6, p: 2 }}>
-      <Typography variant="h4" align="center" fontWeight={700} mb={2} color="primary">
+    <Box sx={{ maxWidth: { xs: '100%', sm: 600 }, mx: 'auto', mt: { xs: 2, sm: 6 }, p: { xs: 1, sm: 2 } }}>
+      <Typography variant="h4" align="center" fontWeight={700} mb={2} color="primary" sx={{ fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
         AI Smart Assistant
       </Typography>
-      <Paper elevation={3} sx={{ p: 3, minHeight: 350, background: '#f9f9f9', borderRadius: 3 }}>
+      <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 3 }, minHeight: 250, background: '#f9f9f9', borderRadius: 3 }}>
         <Stack spacing={2}>
           {messages.map((msg, i) => (
             <Box key={i} sx={{ display: 'flex', flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row', alignItems: 'flex-end' }}>
-              <Avatar sx={{ bgcolor: msg.sender === 'user' ? 'primary.main' : 'secondary.main', ml: msg.sender === 'user' ? 2 : 0, mr: msg.sender === 'assistant' ? 2 : 0 }}>
-                {msg.sender === 'user' ? 'U' : 'A'}
+              <Avatar sx={{ bgcolor: msg.sender === 'user' ? 'primary.main' : 'secondary.main', ml: msg.sender === 'user' ? 2 : 0, mr: msg.sender === 'assistant' ? 2 : 0, width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 } }}>
+                {msg.sender === 'user' ? <PersonIcon fontSize="small" /> : <SmartToyIcon fontSize="small" />}
               </Avatar>
               <Box sx={{
                 bgcolor: msg.sender === 'user' ? 'primary.light' : 'secondary.light',
                 color: '#222',
-                px: 2, py: 1, borderRadius: 2, maxWidth: '70%',
+                px: 2, py: 1, borderRadius: 2, maxWidth: { xs: '85%', sm: '70%' },
                 boxShadow: 1,
                 whiteSpace: 'pre-line',
+                fontSize: { xs: '0.95rem', sm: '1rem' },
               }}>
                 <Typography variant="body1" fontWeight={msg.sender === 'user' ? 600 : 500}>
                   {msg.text}
@@ -102,7 +105,12 @@ const Chatbot = () => {
           ))}
         </Stack>
       </Paper>
-      <Stack direction="row" spacing={2} mt={2}>
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+          <CircularProgress size={32} color="primary" />
+        </Box>
+      )}
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
         <TextField
           fullWidth
           variant="outlined"
@@ -113,18 +121,18 @@ const Chatbot = () => {
           placeholder="Type your message..."
           sx={{ bgcolor: 'white', borderRadius: 2 }}
         />
-        <Button onClick={sendMessage} disabled={loading} variant="contained" size="large">
+        <Button onClick={sendMessage} disabled={loading} variant="contained" size="large" sx={{ minWidth: { xs: '100%', sm: 100 } }}>
           Send
         </Button>
       </Stack>
-      <Stack direction="row" spacing={2} mt={2} justifyContent="center">
-        <Button onClick={fetchCalendarEvents} disabled={loading} variant="outlined">
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2} justifyContent="center">
+        <Button onClick={fetchCalendarEvents} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
           Calendar Events
         </Button>
-        <Button onClick={fetchDayPlan} disabled={loading} variant="outlined">
+        <Button onClick={fetchDayPlan} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 160 } }}>
           Day Plan
         </Button>
-        <Button onClick={fetchProductivityInsights} disabled={loading} variant="outlined">
+        <Button onClick={fetchProductivityInsights} disabled={loading} variant="outlined" sx={{ minWidth: { xs: '100%', sm: 180 } }}>
           Productivity Insights
         </Button>
       </Stack>
