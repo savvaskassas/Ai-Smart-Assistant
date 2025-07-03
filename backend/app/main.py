@@ -183,6 +183,10 @@ def get_important_emails_and_add_events():
     messages = results.get('messages', [])
     added_events = []
     debug_info = []
+    KEYWORDS = [
+        "meeting", "appointment", "deadline", "call", "event", "conference", "webinar", "invite", "schedule", "session",
+        "συνάντηση", "ραντεβού", "προθεσμία", "εκδήλωση", "διάλεξη", "σεμινάριο", "πρόσκληση", "πρόγραμμα", "συνεδρία"
+    ]
     for msg in messages:
         msg_data = gmail_service.users().messages().get(userId='me', id=msg['id'], format='raw').execute()
         raw_msg = urlsafe_b64decode(msg_data['raw'].encode('ASCII'))
@@ -200,6 +204,10 @@ def get_important_emails_and_add_events():
         from_ = email_msg['From']
         payload = email_msg.get_payload(decode=True)
         body = payload.decode(errors='ignore') if payload else ''
+        # Filter by keywords (subject/body)
+        text = (subject + ' ' + body).lower()
+        if not any(kw in text for kw in KEYWORDS):
+            continue
         # Extract dates with spaCy, regex, dateparser
         found_dates = extract_dates(subject + ' ' + body)
         debug_info.append({'subject': subject, 'from': from_, 'body': body, 'found_dates': found_dates})
