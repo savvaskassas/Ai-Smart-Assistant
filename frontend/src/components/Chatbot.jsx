@@ -8,7 +8,7 @@ const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [calendarEvents, setCalendarEvents] = useState(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const Chatbot = () => {
     try {
       const response = await fetch('http://127.0.0.1:8080/calendar/events');
       const data = await response.json();
-      console.log('Calendar events response:', data);
+      console.log('Calendar events response:', JSON.stringify(data, null, 2));
       setCalendarEvents(data.events || []);
       setMessages(msgs => [
         ...msgs,
@@ -160,7 +160,7 @@ const Chatbot = () => {
           </span>
         </Tooltip>
       </Stack>
-      {calendarEvents.length > 0 && <Calendar events={calendarEvents} />}
+      {calendarEvents !== null && <Calendar events={calendarEvents} />}
     </Box>
   );
 };
