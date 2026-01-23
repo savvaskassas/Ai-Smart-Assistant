@@ -317,7 +317,7 @@ When you first use features requiring Google API access:
 
 ---
 
-## System Usage Guide (with examples)
+## System Usage Guide 
 
 ### Main Features
 
