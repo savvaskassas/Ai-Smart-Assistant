@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, TextField, Button, Paper, Typography, Stack, Avatar, CircularProgress, Tooltip } from '@mui/material';
 import Calendar from './Calendar';
+import ProductivityChart from './ProductivityChart';
 import PersonIcon from '@mui/icons-material/Person';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 
@@ -9,6 +10,7 @@ const Chatbot = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState(null);
+  const [productivityData, setProductivityData] = useState(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -74,12 +76,33 @@ const Chatbot = () => {
       const response = await fetch('http://127.0.0.1:8080/productivity-insights');
       const data = await response.json();
       const insights = data.insights;
+      setProductivityData(insights);
       setMessages(msgs => [
         ...msgs,
-        { sender: 'assistant', text: `Productivity Insights:\nTotal events: ${insights.total_events}\nTotal minutes: ${insights.total_minutes}\nMost productive hour: ${insights.most_productive_hour}\nMinutes per hour: ${JSON.stringify(insights.minutes_per_hour, null, 2)}` }
+        { sender: 'assistant', text: `✅ Productivity insights loaded! Check the dashboard below for detailed analytics.` }
       ]);
     } catch (e) {
       setMessages(msgs => [...msgs, { sender: 'assistant', text: 'Error fetching productivity insights.' }]);
+    }
+    setLoading(false);
+  };
+
+  const addEmailsToCalendar = async () => {
+    setLoading(true);
+    setMessages(msgs => [
+      ...msgs,
+      { sender: 'assistant', text: 'Scanning important emails and adding events to calendar...' }
+    ]);
+    try {
+      const response = await fetch('http://127.0.0.1:8080/emails/important-and-add');
+      const data = await response.json();
+      const addedCount = data.added_events?.length || 0;
+      setMessages(msgs => [
+        ...msgs,
+        { sender: 'assistant', text: `✅ Successfully processed emails!\n${addedCount} events added to your calendar.\n\nDetails: ${JSON.stringify(data.added_events, null, 2)}` }
+      ]);
+    } catch (e) {
+      setMessages(msgs => [...msgs, { sender: 'assistant', text: 'Error processing emails and adding to calendar.' }]);
     }
     setLoading(false);
   };
@@ -89,7 +112,7 @@ const Chatbot = () => {
       <Typography variant="h4" align="center" fontWeight={700} mb={2} color="primary" sx={{ fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
         AI Smart Assistant
       </Typography>
-      <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 3 }, minHeight: 250, background: '#f9f9f9', borderRadius: 3 }}>
+      <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 3 }, minHeight: 250, bgcolor: 'background.paper', borderRadius: 3 }}>
         <Stack spacing={2}>
           {messages.map((msg, i) => (
             <Box key={i} sx={{ display: 'flex', flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row', alignItems: 'flex-end' }}>
@@ -97,8 +120,8 @@ const Chatbot = () => {
                 {msg.sender === 'user' ? <PersonIcon fontSize="small" /> : <SmartToyIcon fontSize="small" />}
               </Avatar>
               <Box sx={{
-                bgcolor: msg.sender === 'user' ? 'primary.light' : 'secondary.light',
-                color: '#222',
+                bgcolor: msg.sender === 'user' ? 'primary.dark' : 'secondary.dark',
+                color: 'white',
                 px: 2, py: 1, borderRadius: 2, maxWidth: { xs: '85%', sm: '70%' },
                 boxShadow: 1,
                 whiteSpace: 'pre-line',
@@ -127,7 +150,7 @@ const Chatbot = () => {
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
           disabled={loading}
           placeholder="Type your message..."
-          sx={{ bgcolor: 'white', borderRadius: 2 }}
+          sx={{ bgcolor: 'background.paper', borderRadius: 2 }}
         />
         <Tooltip title="Send your message">
           <span>
@@ -159,8 +182,16 @@ const Chatbot = () => {
             </Button>
           </span>
         </Tooltip>
+        <Tooltip title="Scan emails and auto-add events to calendar">
+          <span>
+            <Button onClick={addEmailsToCalendar} disabled={loading} variant="contained" color="success" sx={{ minWidth: { xs: '100%', sm: 180 } }}>
+              📧 Email → Calendar
+            </Button>
+          </span>
+        </Tooltip>
       </Stack>
       {calendarEvents !== null && <Calendar events={calendarEvents} />}
+      {productivityData !== null && <ProductivityChart insights={productivityData} />}
     </Box>
   );
 };

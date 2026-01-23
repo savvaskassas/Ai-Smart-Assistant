@@ -1,29 +1,39 @@
-# 🎯 AI Smart Assistant for Personal Organization
+# AI Smart Assistant - README
 
-An intelligent personal digital assistant that leverages Artificial Intelligence (AI), Machine Learning (ML), and Natural Language Processing (NLP) to enhance daily organization and productivity workflows.
+## Contents
 
-## 🔍 Overview
+1. [Additional Assumptions and Deviations](#additional-assumptions-and-deviations)
+2. [Technologies Used](#technologies-used)
+3. [Description of Constructed Files](#description-of-constructed-files)
+4. [Database Description](#database-description)
+5. [System Execution Guide](#system-execution-guide)
+6. [System Usage Guide (with examples)](#system-usage-guide-with-examples)
+7. [References](#references)
 
-The AI Smart Assistant analyzes data from calendars, emails, and notes to provide smart daily plans, identify productive habits, and communicate naturally with users through an intuitive chatbot interface.
+---
 
-## 🧠 Core Features
+## Additional Assumptions and Deviations
 
-### 1. Data Analysis & Organization
-- Comprehensive analysis of calendars, emails, and notes
-- Automatic detection of scheduled commitments, deadlines, and important contacts
-- Intelligent event extraction from emails with automatic Google Calendar integration
+- The project is structured for both local testing and scalable deployment.
+- OAuth2 setup is required for Google Calendar and Gmail integration.
+- All AI/ML processing is performed server-side using Python.
+- The system supports both English and Greek language processing.
+- No user authentication/JWT by default (planned as enhancement).
+- Development and production environments are separated for clear setup.
+- Auto-scroll and tooltips implemented for enhanced UX.
+- Responsive design supports both mobile and desktop interfaces.
 
-### 2. Personalized Recommendations
-- Dynamic daily plan generation based on user priorities
-- Smart reminders, notifications, and optimal break time suggestions
+---
 
-### 3. Natural Language Interface
-- Conversational AI chatbot for seamless user interaction
-- Example: "What's my schedule for today?"
+## Technologies Used
 
-### 4. Productivity Analytics
-- Time tracking across different activities
-- Data-driven insights on peak productivity hours and patterns
+- **Backend:** Python 3.8+, FastAPI, Hugging Face Transformers, spaCy, scikit-learn, dateparser
+- **Frontend:** React + Vite, Material-UI (v7), Material Icons, @emotion/styled
+- **APIs:** Google Calendar API, Gmail API (OAuth2)
+- **AI/ML:** Named Entity Recognition (NER), text classification, date extraction
+- **Other:** RESTful API, CORS middleware, regex patterns, multilingual support
+
+---
 
 ## 🛠️ Technology Stack
 
@@ -157,27 +167,59 @@ GMAIL_SCOPE=https://www.googleapis.com/auth/gmail.readonly
 - **UI Theme**: Customize Material-UI theme in `frontend/src/`
 - **Language Support**: Extend multi-language support in NLP modules
 
+## ✨ Recently Implemented Features
+
+### Version 2.0.0 - January 2026
+
+- ✅ **Dark/Light Theme Toggle** - Complete theme switching system with Material-UI integration
+  - React Context API for theme management
+  - Adaptive colors for all components including charts
+  - Toggle button with smooth transitions
+  
+- ✅ **Advanced Analytics Dashboard** - Interactive data visualization with Recharts
+  - Bar charts for hourly activity distribution
+  - Pie charts for time allocation analysis
+  - Summary cards with key productivity metrics
+  - Responsive design for all screen sizes
+  
+- ✅ **Smart Scheduling Engine** - Intelligent daily planning algorithm
+  - Free time block detection and optimization
+  - Deep work session recommendations
+  - Productivity score calculation
+  - Automated task scheduling suggestions
+  
+- ✅ **Email-to-Calendar Integration** - Automatic event creation from emails
+  - Smart email scanning with keyword filtering
+  - NLP-powered date extraction (multilingual)
+  - One-click event import to Google Calendar
+  - Real-time feedback and debug information
+  
+- ✅ **Context-Aware Chatbot** - Enhanced AI assistant with intelligent responses
+  - Keyword-based query understanding
+  - Calendar and productivity-specific answers
+  - Multilingual support (English/Greek)
+  - Feature discovery and help system
+  
+- ✅ **Comprehensive Productivity Analyzer** - ML-powered insights
+  - Event categorization (meetings, focus time, breaks, deadlines)
+  - Statistical analysis with mean/median calculations
+  - Peak productivity hours detection
+  - AI-generated recommendations
+  - Weekly trend analysis
+  
+- ✅ **Environment Variables Support** - Secure configuration management
+  - `.env.example` template for easy setup
+  - Flexible deployment options
+  - Security best practices documentation
+
 ## 🚧 Roadmap & Future Enhancements
 
 - [ ] **Push Notifications** - Real-time alerts and reminders
-- [ ] **Dark/Light Theme Toggle** - Enhanced user experience
 - [ ] **Multi-user Support** - JWT authentication and user management
 - [ ] **IoT Integration** - Smart home device connectivity
 - [ ] **Offline Functionality** - Local data processing capabilities
 - [ ] **Mobile Application** - React Native implementation
-- [ ] **Advanced Analytics** - Machine learning-powered insights
 - [ ] **Voice Commands** - Speech recognition integration
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Please follow these guidelines:
-
-### Development Process
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** your changes (`git commit -m 'Add comprehensive AmazingFeature'`)
-4. **Push** to the branch (`git push origin feature/AmazingFeature`)
-5. **Open** a Pull Request with detailed description
 
 ### Code Standards
 - Follow PEP 8 for Python code

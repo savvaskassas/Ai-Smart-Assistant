@@ -16,17 +16,25 @@ import os
 import spacy
 import dateparser
 import re
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI(
     title="AI-powered Smart Assistant Backend",
     description="API for a personal AI assistant focused on organization and productivity"
 )
 
+# Get frontend URL from environment
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+FRONTEND_URL_ALT = FRONTEND_URL.replace('localhost', '127.0.0.1')
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+        FRONTEND_URL,
+        FRONTEND_URL_ALT,
         "http://localhost:5174",
         "http://127.0.0.1:5174"
     ],
@@ -35,13 +43,25 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# Get configuration from environment
 SCOPES = [
-    'https://www.googleapis.com/auth/calendar.readonly',
+    os.getenv('CALENDAR_SCOPE', 'https://www.googleapis.com/auth/calendar.readonly,https://www.googleapis.com/auth/calendar.events').split(',')[0],
     'https://www.googleapis.com/auth/calendar.events',
-    'https://www.googleapis.com/auth/gmail.readonly'
+    os.getenv('GMAIL_SCOPE', 'https://www.googleapis.com/auth/gmail.readonly')
 ]
-CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), 'client_secret_633312370488-b6gjg118flkj05a0c8ni44p611hs53q5.apps.googleusercontent.com.json')
-TOKEN_FILE = os.path.join(os.path.dirname(__file__), 'token.json')
+
+CREDENTIALS_FILE = os.path.join(
+    os.path.dirname(__file__), 
+    os.getenv('CREDENTIALS_FILE', 'client_secret_633312370488-b6gjg118flkj05a0c8ni44p611hs53q5.apps.googleusercontent.com.json')
+)
+TOKEN_FILE = os.path.join(
+    os.path.dirname(__file__), 
+    os.getenv('TOKEN_FILE', 'token.json')
+)
+
+# Get email keywords from environment
+EMAIL_KEYWORDS_STR = os.getenv('EMAIL_KEYWORDS', 'meeting,appointment,deadline,call,event,conference,webinar,invite,schedule,session,συνάντηση,ραντεβού,προθεσμία,εκδήλωση,διάλεξη,σεμινάριο,πρόσκληση,πρόγραμμα,συνεδρία')
+EMAIL_KEYWORDS = [kw.strip() for kw in EMAIL_KEYWORDS_STR.split(',')]
 
 class ChatRequest(BaseModel):
     message: str
@@ -184,10 +204,7 @@ def get_important_emails_and_add_events():
     messages = results.get('messages', [])
     added_events = []
     debug_info = []
-    KEYWORDS = [
-        "meeting", "appointment", "deadline", "call", "event", "conference", "webinar", "invite", "schedule", "session",
-        "συνάντηση", "ραντεβού", "προθεσμία", "εκδήλωση", "διάλεξη", "σεμινάριο", "πρόσκληση", "πρόγραμμα", "συνεδρία"
-    ]
+    
     for msg in messages:
         msg_data = gmail_service.users().messages().get(userId='me', id=msg['id'], format='raw').execute()
         raw_msg = urlsafe_b64decode(msg_data['raw'].encode('ASCII'))
@@ -207,7 +224,7 @@ def get_important_emails_and_add_events():
         body = payload.decode(errors='ignore') if payload else ''
         # Filter by keywords (subject/body)
         text = (subject + ' ' + body).lower()
-        if not any(kw in text for kw in KEYWORDS):
+        if not any(kw in text for kw in EMAIL_KEYWORDS):
             continue
         # Extract dates with spaCy, regex, dateparser
         found_dates = extract_dates(subject + ' ' + body)

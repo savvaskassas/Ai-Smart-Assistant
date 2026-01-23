@@ -5,6 +5,19 @@ node_modules/
 dist/
 build/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
 # Production
 .env
 .env.*
@@ -84,6 +97,14 @@ $RECYCLE.BIN/
 .env.test.local
 .env.production.local
 
+# Google API credentials and tokens
+token.json
+client_secret_*.json
+*.apps.googleusercontent.com.json
+
+# spaCy models
+en_core_web_*/
+
 # Miscellaneous
 *.tgz
 
@@ -91,3 +112,5 @@ $RECYCLE.BIN/
 *.bak
 *.tmp
 
+# Duplicate entries (cleanup)
+# node_modules already listed above

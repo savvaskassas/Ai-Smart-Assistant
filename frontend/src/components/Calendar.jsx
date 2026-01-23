@@ -14,7 +14,7 @@ const Calendar = ({ events }) => {
 
   return (
     <Box sx={{ mt: 4, maxWidth: 400, mx: 'auto' }}>
-      <Paper elevation={2} sx={{ p: 2, borderRadius: 3, background: '#f5f7fa' }}>
+      <Paper elevation={2} sx={{ p: 2, borderRadius: 3, bgcolor: 'background.paper' }}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <StaticDatePicker
             displayStaticWrapperAs="desktop"
@@ -49,7 +49,7 @@ const Calendar = ({ events }) => {
             const date = ev.start?.date || ev.start?.dateTime;
             return date && new Date(date).toDateString() === selectedDate.toDateString();
           }).map((ev, i) => (
-            <Typography key={i} variant="body2" sx={{ mb: 0.5 }}>
+            <Typography key={i} variant="body2" sx={{ mb: 0.5 }} color="text.primary">
               {ev.summary} ({ev.start?.date || ev.start?.dateTime})
             </Typography>
           ))}
