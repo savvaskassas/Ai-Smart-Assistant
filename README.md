@@ -319,269 +319,57 @@ When you first use features requiring Google API access:
 
 ## System Usage Guide (with examples)
 
-### Getting Started
+### Main Features
 
-Once both backend and frontend servers are running, follow these usage examples:
+**1. Chatbot Interface**
+- Natural conversation with AI assistant
+- Calendar queries about schedule and appointments
+- Task management and workflow organization
 
-### 1. Chatbot Interaction
+**2. Calendar Management**
+- Load and display Google Calendar events
+- First-time OAuth authentication required
+- View upcoming events for next 30 days
 
-#### Example 1: General Query
-**User Input:**
-```
-Hello! What can you help me with?
-```
+**3. Email-to-Calendar Integration**
+- Scan emails for event-related keywords
+- Automatic date and time extraction using NLP
+- One-click import to Google Calendar
 
-**Expected Response:**
-```
-Hello! I'm your AI Smart Assistant. I can help you with:
-- Managing your Google Calendar
-- Analyzing your productivity
-- Planning your day
-- Extracting important information from emails
-- Answering questions about your schedule
-```
+**4. Day Planning**
+- AI-generated daily schedule recommendations
+- Free time block detection
+- Productivity score calculation
+- Deep work session suggestions
 
-#### Example 2: Schedule Query
-**User Input:**
-```
-What's on my schedule today?
-```
+**5. Productivity Analytics**
+- Interactive charts and statistics
+- Event categorization (meetings, focus time, breaks, deadlines)
+- Peak productivity hours analysis
+- Time allocation insights
 
-**Action:** Click "Show Calendar Events" button first to load your calendar data.
+**6. Advanced Features**
+- Named Entity Recognition (NER) for extracting persons, organizations, locations, dates
+- Multilingual support (English and Greek)
+- Theme customization (Dark/Light mode)
+- Real-time error handling and authentication
 
-**Expected Response:**
-```
-Based on your calendar, here are today's events:
-- 9:00 AM: Team Meeting
-- 2:00 PM: Project Review
-- 4:30 PM: One-on-one with Manager
-```
-
-#### Example 3: Productivity Query
-**User Input:**
-```
-How productive was I this week?
-```
-
-**Action:** The system will analyze your calendar events and provide insights.
-
-**Expected Response:**
-```
-Your productivity analysis:
-- Total events: 24
-- Meetings: 12 (50%)
-- Focus time: 8 (33%)
-- Peak hours: 10 AM - 12 PM
-- Recommendation: Try to schedule deep work during morning hours
-```
-
-### 2. Calendar Management
-
-#### Loading Calendar Events
-
-**Steps:**
-1. Click the "Show Calendar Events" button in the interface
-2. If first time, authenticate with Google account
-3. View events displayed in the calendar component
-
-**Example Output:**
-```
-Upcoming Events (Next 30 Days):
-
-📅 January 24, 2026
-  • 10:00 AM - 11:00 AM: Sprint Planning
-  • 3:00 PM - 4:00 PM: Client Call
-
-📅 January 25, 2026
-  • 9:00 AM - 10:30 AM: Code Review Session
-  • 2:00 PM - 3:00 PM: Department Meeting
-```
-
-#### Email-to-Calendar Integration
-
-**Steps:**
-1. Click "Scan Emails for Events" button
-2. System analyzes recent emails for keywords: meeting, deadline, appointment, etc.
-3. Review detected events
-4. Click "Add to Calendar" to import
-
-**Example Scenario:**
-
-*Email Subject:* "Project Deadline - January 30"
-*Email Body:* "Please submit the final report by January 30, 2026, 5:00 PM."
-
-**System Detection:**
-```json
-{
-  "event": "Project Deadline",
-  "date": "2026-01-30",
-  "time": "17:00",
-  "source": "email",
-  "confidence": "high"
-}
-```
-
-**Result:** Event automatically added to Google Calendar with reminder
-
-### 3. Day Planning
-
-#### Generate Daily Plan
-
-**Steps:**
-1. Click "Generate Day Plan" button
-2. System analyzes your calendar and free time
-3. View AI-generated schedule recommendations
-
-**Example Output:**
-```
-🌅 Your Optimized Day Plan for January 24, 2026
-
-7:00 AM - 8:00 AM: Morning routine & breakfast
-8:00 AM - 10:00 AM: 🎯 Deep Work Block (High focus task)
-10:00 AM - 11:00 AM: Sprint Planning Meeting
-11:00 AM - 12:00 PM: 🎯 Deep Work Block
-12:00 PM - 1:00 PM: ☕ Lunch Break
-1:00 PM - 3:00 PM: 🎯 Deep Work Block
-3:00 PM - 4:00 PM: Client Call
-4:00 PM - 5:00 PM: Email processing & admin tasks
-5:00 PM - 6:00 PM: Exercise & personal time
-
-💡 Productivity Score: 8.5/10
-💡 Free time available: 4 hours
-💡 Recommendation: Your morning is ideal for complex tasks!
-```
-
-### 4. Productivity Analytics
-
-#### View Productivity Insights
-
-**Steps:**
-1. Click "Productivity Insights" button
-2. System analyzes recent calendar history
-3. View interactive charts and statistics
-
-**Example Dashboard:**
-
-**Summary Cards:**
-```
-📊 Total Events: 156 (last 30 days)
-⏰ Average per Day: 5.2 events
-🎯 Most Productive Hour: 10:00 AM
-📈 Productivity Score: 7.8/10
-```
-
-**Time Allocation (Pie Chart):**
-- Meetings: 45%
-- Focus Time: 30%
-- Breaks: 15%
-- Deadlines: 10%
-
-### 5. Advanced Features
-
-#### Named Entity Recognition
-
-**Example Input:**
-```
-I need to meet with John Smith from Microsoft next Tuesday at their Seattle office to discuss the Azure integration project.
-```
-
-**System Extraction:**
-```json
-{
-  "persons": ["John Smith"],
-  "organizations": ["Microsoft"],
-  "locations": ["Seattle"],
-  "dates": ["next Tuesday"],
-  "projects": ["Azure integration"]
-}
-```
-
-#### Multilingual Support
-
-**Greek Example:**
-**Input:** "Έχω συνάντηση την Παρασκευή στις 3 το απόγευμα"
-**Translation:** "I have a meeting on Friday at 3 PM"
-
-**System Detection:**
-```json
-{
-  "event_type": "meeting",
-  "day": "Friday",
-  "time": "15:00",
-  "language": "Greek"
-}
-```
-
-### 6. Theme Customization
-
-**Steps:**
-1. Locate the theme toggle button (🌙/☀️) in the top navigation
-2. Click to switch between Dark and Light modes
-3. Theme preference is saved automatically
-
-**Dark Mode Benefits:**
-- Reduced eye strain in low-light environments
-- Better contrast for charts and data visualization
-- Battery saving on OLED screens
-
-### 7. Error Handling Examples
-
-#### Scenario: No Internet Connection
-
-**User Action:** Try to load calendar events
-
-**System Response:**
-```
-❌ Unable to connect to Google Calendar
-🔄 Please check your internet connection and try again
-```
-
-#### Scenario: Invalid OAuth Token
-
-**User Action:** Access calendar after token expiration
-
-**System Response:**
-```
-🔐 Authentication expired
-➡️ Redirecting to Google login...
-```
-
-### 8. Best Practices
+### Best Practices
 
 **For Optimal Performance:**
 - Load calendar events at the start of each session
-- Run email scan during off-peak hours (fewer API calls)
+- Run email scan during off-peak hours
 - Review day plan in the morning
 - Check productivity insights weekly
-- Keep browser tab active for real-time updates
 
 **For Better AI Responses:**
-- Use specific questions: "What meetings do I have tomorrow?" instead of "Schedule?"
-- Provide context: "Based on my calendar, when should I schedule a 2-hour deep work block?"
-- Use natural language: The chatbot understands conversational queries
+- Use specific questions instead of vague queries
+- Provide context when asking for recommendations
+- Use natural language - the chatbot understands conversational queries
 
 ---
 
-## 💡 Usage Guide
-
-### Chatbot Interface
-1. **Natural Conversation**: Type messages to interact with the AI assistant
-2. **Calendar Queries**: Ask about your schedule, appointments, and events
-3. **Task Management**: Get help organizing your daily workflow
-
-### Smart Features
-1. **Calendar Events**: Click the button to load and display your Google Calendar events
-2. **Day Planning**: Generate AI-powered daily schedules based on your commitments
-3. **Productivity Insights**: Access detailed analytics about your time usage patterns
-4. **Email-to-Calendar**: Automatically detect important events in emails and add them to your calendar
-
-### Supported Natural Language Queries
-- "What's my schedule for today?"
-- "Show me my upcoming meetings"
-- "When is my next deadline?"
-- "Analyze my productivity this week"
-
-## 
+## References
 5. **Google Calendar API**
    - URL: https://developers.google.com/calendar
    - Used for: Calendar event management, OAuth2 authentication
